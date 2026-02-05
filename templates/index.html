@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vulnerability Scanner Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <main class="container">
+      <header class="hero">
+        <div>
+          <h1>ระบบสแกนช่องโหว่เครือข่าย</h1>
+          <p>สถาปัตยกรรมตามโครงงาน: <strong>Flask + Python Script + Nmap + OWASP ZAP + Arachni + SQLite</strong> พร้อมรายงาน JSON</p>
+          <span class="badge">Authorized Security Testing Only</span>
+        </div>
+      </header>
+
+      <section class="grid two-col">
+        <article class="card">
+          <h2>เริ่มสแกน</h2>
+          <form id="scan-form">
+            <label>Target IP / Domain / URL</label>
+            <input id="target" placeholder="เช่น 192.168.1.0/24 หรือ example.com หรือ https://example.com หรือ example.com/login" required />
+
+            <label>โหมดสแกน</label>
+            <select id="mode">
+              <option value="fast">Fast</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="deep">Deep</option>
+            </select>
+
+            <button type="submit">เริ่มทำการสแกน</button>
+          </form>
+          <p id="status"></p>
+        </article>
+
+        <article class="card">
+          <h2>ความสามารถของเครื่องมือ</h2>
+          <ul>
+            <li><strong>Nmap</strong>: Host Discovery, Port/Service Detection, NSE vulners</li>
+            <li><strong>OWASP ZAP</strong>: Passive Scan, Spider + Active Scan, JSON Export</li>
+            <li><strong>Arachni</strong>: XSS/SQLi Checks, JSON Export</li>
+          </ul>
+          <h3>Flow การทำงาน</h3>
+          <ol>
+            <li>กรอก IP และเลือกโหมดสแกน</li>
+            <li>ตรวจสอบรูปแบบเป้าหมาย (IP/CIDR/Domain/URL)</li>
+            <li>สแกนและจัดเก็บผลลงฐานข้อมูล</li>
+            <li>แมตช์ช่องโหว่กับฐานข้อมูล CVE</li>
+            <li>สร้างรายงานและแสดงบนเว็บแอป</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="grid two-col">
+        <article class="card">
+          <h2>ผลสแกนล่าสุด</h2>
+          <div id="results" class="placeholder">ยังไม่มีข้อมูล</div>
+        </article>
+
+        <article class="card">
+          <h2>ประวัติการสแกน (ล่าสุด 20 รายการ)</h2>
+          <div id="history" class="history"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+# Core app runs with Python stdlib.
+# PDF runtime dependencies are installed via apt on Kali RPi:
+# - python3-reportlab
+# - fonts-thai-tlwg
