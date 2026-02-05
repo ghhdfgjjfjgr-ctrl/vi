@@ -1,0 +1,19 @@
+name: sanity
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-basic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check merge conflict markers
+        run: |
+          if rg -n '^(<<<<<<<|=======|>>>>>>>)' app.py templates/index.html static/app.js static/style.css scripts/install-kali-rpi.sh scripts/update-kali-rpi.sh; then
+            echo 'Conflict markers detected';
+            exit 1;
+          fi
+      - name: Python syntax check
+        run: python3 -m py_compile app.py

@@ -6,10 +6,7 @@ import os
 import random
 import re
 import socket
- codex-d1sx1u
-import re
-import socket
- main
+ 
 import sqlite3
 import time
 import uuid
@@ -98,8 +95,6 @@ def init_db() -> None:
     conn.close()
 
 
- codex-d1sx1u
-
 DOMAIN_RE = re.compile(r"^(?=.{1,253}$)(?!-)(?:[A-Za-z0-9-]{1,63}\.)+[A-Za-z]{2,63}$")
 
 
@@ -163,7 +158,6 @@ def validate_target(target: str) -> None:
         ipaddress.ip_network(target, strict=False)
     else:
         ipaddress.ip_address(target)
- main
 
 
 def classify_risk(cvss: float) -> str:
@@ -183,7 +177,7 @@ def overall_risk(vulns: list[dict]) -> str:
     return classify_risk(highest)
 
 
- codex-d1sx1u
+ 
 def _extract_hosts(target: str, target_kind: str) -> list[str]:
     if target_kind == "cidr":
         net = ipaddress.ip_network(target, strict=False)
@@ -325,7 +319,7 @@ def simulate_scan(target: str, mode: str) -> dict:
                     "description": f"Service {svc['service']} {svc['version']} is running on port {svc['port']}",
                 }
             )
- main
+ 
 
     open_ports = len(service_samples)
     findings = len(vulnerabilities)
@@ -338,13 +332,12 @@ def simulate_scan(target: str, mode: str) -> dict:
         "summary": {
             "hosts_discovered": discovered_hosts,
             "target_online": discovered_hosts > 0,
- codex-d1sx1u
-            "hosts_discovered": discovered_hosts,
-            "target_online": discovered_hosts > 0,
+ 
+ 
 
             "hosts_discovered": hosts,
             "target_online": host_online,
- main
+ 
             "open_ports": open_ports,
             "findings": findings,
             "risk_score": round(risk_score, 1),
@@ -359,11 +352,8 @@ def simulate_scan(target: str, mode: str) -> dict:
         "vulnerabilities": vulnerabilities,
         "observations": [
             "ผลลัพธ์เป็นการสแกน ณ ช่วงเวลาหนึ่ง (point-in-time) ด้วย socket connectivity scan",
- codex-d1sx1u
-            "ผลลัพธ์เป็นการสแกน ณ ช่วงเวลาหนึ่ง (point-in-time) ด้วย socket connectivity scan",
+ 
 
-            "ผลลัพธ์เป็นการสแกน ณ ช่วงเวลาหนึ่ง (point-in-time)",
- main
             "Firewall/IDS/IPS อาจมีผลต่อความลึกของการสแกน",
             "ประเมินเฉพาะบริการที่มองเห็นได้จากเครือข่าย",
         ],
@@ -377,7 +367,6 @@ def simulate_scan(target: str, mode: str) -> dict:
     }
 
 
- codex-d1sx1u
 
 
 def _pdf_escape(text: str) -> str:
@@ -458,7 +447,7 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
         return None
 
     pdf_path = REPORTS_DIR / f"{scan_id}.pdf"
- main
+ 
     c = canvas.Canvas(str(pdf_path), pagesize=A4)
     width, height = A4
 
@@ -499,11 +488,10 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
     txt(42, y, "1. SCAN INFORMATION", 14, bold=True)
     y -= 22
     txt(42, y, f"Target: {result['target']}")
- codex-d1sx1u
-    txt(42, y, f"Target: {result['target']}")
+ 
 
     txt(42, y, f"Target IP: {result['target']}")
- main
+ 
     txt(290, y, f"Date (Thai): {format_thai_datetime(completed)} (ICT)")
     y -= 18
     txt(42, y, f"Scan ID: {scan_id}")
@@ -516,11 +504,11 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
     state = "ONLINE" if result["summary"]["target_online"] else "OFFLINE"
     txt(42, y, f"The system identified target host {result['target']} as {state}.")
 
- codex-d1sx1u
+ 
     txt(42, y, f"The system identified target host {result['target']} as {state}.")
 
     txt(42, y, f"The system identified target {result['target']} as {state}.")
- main
+ 
 
     # section 3
     y -= 32
@@ -734,7 +722,7 @@ class Handler(BaseHTTPRequestHandler):
         if mode not in {"fast", "balanced", "deep"}:
             return self._json({"error": "Invalid scan mode"}, status=400)
         try:
- codex-d1sx1u
+ 
             target_kind = validate_target(target)
         except Exception:
             return self._json({"error": "Target must be valid IP/CIDR/domain/URL"}, status=400)
@@ -750,7 +738,7 @@ class Handler(BaseHTTPRequestHandler):
         started = datetime.utcnow()
         time.sleep(0.5)
         result = simulate_scan(target, mode)
- main
+ 
         scan_id = str(uuid.uuid4())
 
         json_path = REPORTS_DIR / f"{scan_id}.json"

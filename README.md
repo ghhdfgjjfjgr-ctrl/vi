@@ -6,9 +6,6 @@
 - Arachni (XSS / SQLi checks)
 - เก็บผลสแกนใน SQLite + Export JSON และ PDF
 - รองรับเป้าหมายแบบ IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme เช่น example.com/login)
- codex-d1sx1u
-- รองรับเป้าหมายแบบ IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme เช่น example.com/login)
- main
 
 > ใช้เพื่อการทดสอบความปลอดภัยกับระบบที่ได้รับอนุญาตเท่านั้น
 
@@ -108,3 +105,15 @@ curl -s http://127.0.0.1:5000/api/health
 - `README.md` ให้เก็บบรรทัดที่ระบุว่า รองรับ `IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme)`
 
 แนะนำเลือก **Accept both changes** แล้วลบ marker `<<<<<<<`, `=======`, `>>>>>>>` ออกให้หมดก่อน commit.
+
+
+
+## Railway deploy note
+
+โปรเจกต์นี้มี `Procfile` ให้ Railway รัน `scripts/start.sh` ซึ่งจะตรวจ 2 อย่างก่อนเริ่มเซิร์ฟเวอร์:
+
+- ตรวจว่าไม่มี merge conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
+- ตรวจ syntax ด้วย `python3 -m py_compile app.py`
+
+ถ้า fail จะเห็น log ชัดเจนและหยุด deploy ทันที (แทนการ crash ด้วย `IndentationError` แบบไม่ชัดเจน)
+
