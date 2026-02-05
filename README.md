@@ -107,6 +107,7 @@ curl -s http://127.0.0.1:5000/api/health
 แนะนำเลือก **Accept both changes** แล้วลบ marker `<<<<<<<`, `=======`, `>>>>>>>` ออกให้หมดก่อน commit.
 
 
+
 ## Railway deploy note
 
 โปรเจกต์นี้มี `Procfile` ให้ Railway รัน `scripts/start.sh` ซึ่งจะตรวจ 2 อย่างก่อนเริ่มเซิร์ฟเวอร์:
@@ -115,3 +116,4 @@ curl -s http://127.0.0.1:5000/api/health
 - ตรวจ syntax ด้วย `python3 -m py_compile app.py`
 
 ถ้า fail จะเห็น log ชัดเจนและหยุด deploy ทันที (แทนการ crash ด้วย `IndentationError` แบบไม่ชัดเจน)
+
