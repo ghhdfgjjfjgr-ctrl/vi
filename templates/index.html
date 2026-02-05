@@ -24,8 +24,13 @@
         <article class="card">
           <h2>เริ่มสแกน</h2>
           <form id="scan-form">
+ codex-d1sx1u
+            <label>Target IP / Domain / URL</label>
+            <input id="target" placeholder="เช่น 192.168.1.0/24 หรือ example.com หรือ https://example.com หรือ example.com/login" required />
+
             <label>Target IP/CIDR</label>
             <input id="target" placeholder="เช่น 192.168.1.0/24" required />
+ main
 
             <label>โหมดสแกน</label>
             <select id="mode">
@@ -49,7 +54,11 @@
           <h3>Flow การทำงาน</h3>
           <ol>
             <li>กรอก IP และเลือกโหมดสแกน</li>
+ codex-d1sx1u
+            <li>ตรวจสอบรูปแบบเป้าหมาย (IP/CIDR/Domain/URL)</li>
+
             <li>ตรวจสอบรูปแบบเป้าหมาย (IP/CIDR)</li>
+ main
             <li>สแกนและจัดเก็บผลลงฐานข้อมูล</li>
             <li>แมตช์ช่องโหว่กับฐานข้อมูล CVE</li>
             <li>สร้างรายงานและแสดงบนเว็บแอป</li>

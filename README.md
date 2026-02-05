@@ -5,6 +5,10 @@
 - OWASP ZAP (Passive / Spider + Active)
 - Arachni (XSS / SQLi checks)
 - เก็บผลสแกนใน SQLite + Export JSON และ PDF
+ codex-d1sx1u
+- รองรับเป้าหมายแบบ IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme เช่น example.com/login)
+=======
+ main
 
 > ใช้เพื่อการทดสอบความปลอดภัยกับระบบที่ได้รับอนุญาตเท่านั้น
 
@@ -93,3 +97,14 @@ curl -s http://127.0.0.1:5000/api/health
 - `status`: ok
 - `reportlab`: true/false
 - `pdf_font`: ชื่อฟอนต์ที่ระบบเลือกใช้
+
+
+## แก้ปัญหา Merge Conflict บน GitHub
+
+ถ้าในหน้า Resolve conflicts ขึ้นไฟล์ `app.py`, `templates/index.html`, `README.md` ให้ใช้แนวทางนี้:
+
+- `app.py` ให้เก็บฝั่งที่มี `import socket` และฟังก์ชันสแกนจริง (`_extract_hosts`, `_scan_port`, `simulate_scan(..., target_kind)`)
+- `templates/index.html` ให้เก็บบรรทัด input ที่รองรับ `Target IP / Domain / URL`
+- `README.md` ให้เก็บบรรทัดที่ระบุว่า รองรับ `IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme)`
+
+แนะนำเลือก **Accept both changes** แล้วลบ marker `<<<<<<<`, `=======`, `>>>>>>>` ออกให้หมดก่อน commit.
