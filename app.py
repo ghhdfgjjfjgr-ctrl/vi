@@ -108,16 +108,22 @@ def validate_target(target: str) -> str:
     if not t:
         raise ValueError("Target is required")
 
-    if "/" in t and not t.startswith(("http://", "https://")):
-        ipaddress.ip_network(t, strict=False)
-        return "cidr"
+    # CIDR must be plain network string, not URL/path
+    if "/" in t and not t.startswith(("http://", "https://")) and "://" not in t and t.count("/") == 1:
+        try:
+            ipaddress.ip_network(t, strict=False)
+            return "cidr"
+        except Exception:
+            pass
 
+    # direct IP
     try:
         ipaddress.ip_address(t)
         return "ip"
     except Exception:
         pass
 
+    # URL with scheme
     parsed = urlparse(t)
     if parsed.scheme in {"http", "https"} and parsed.hostname:
         host = parsed.hostname
@@ -129,6 +135,19 @@ def validate_target(target: str) -> str:
                 return "url"
         raise ValueError("Invalid URL host")
 
+    # schemeless URL/path like example.com/login
+    if "/" in t and not t.startswith("/"):
+        parsed_guess = urlparse(f"http://{t}")
+        if parsed_guess.hostname:
+            host = parsed_guess.hostname
+            try:
+                ipaddress.ip_address(host)
+                return "url"
+            except Exception:
+                if is_valid_domain(host):
+                    return "url"
+
+    # plain domain
     if is_valid_domain(t):
         return "domain"
 

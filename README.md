@@ -5,7 +5,7 @@
 - OWASP ZAP (Passive / Spider + Active)
 - Arachni (XSS / SQLi checks)
 - เก็บผลสแกนใน SQLite + Export JSON และ PDF
-- รองรับเป้าหมายแบบ IP, CIDR, Domain, URL
+- รองรับเป้าหมายแบบ IP, CIDR, Domain, URL (รวมแบบไม่ใส่ scheme เช่น example.com/login)
 
 > ใช้เพื่อการทดสอบความปลอดภัยกับระบบที่ได้รับอนุญาตเท่านั้น
 
