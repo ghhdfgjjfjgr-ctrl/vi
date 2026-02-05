@@ -4,6 +4,8 @@ import ipaddress
 import json
 import os
 import random
+import re
+import socket
  codex-d1sx1u
 import re
 import socket
@@ -156,7 +158,6 @@ def validate_target(target: str) -> str:
         return "domain"
 
     raise ValueError("Target must be valid IP/CIDR/domain/URL")
-=======
 def validate_target(target: str) -> None:
     if "/" in target:
         ipaddress.ip_network(target, strict=False)
@@ -335,6 +336,8 @@ def simulate_scan(target: str, mode: str) -> dict:
         "mode": mode,
         "status": "COMPLETED",
         "summary": {
+            "hosts_discovered": discovered_hosts,
+            "target_online": discovered_hosts > 0,
  codex-d1sx1u
             "hosts_discovered": discovered_hosts,
             "target_online": discovered_hosts > 0,
@@ -355,6 +358,7 @@ def simulate_scan(target: str, mode: str) -> dict:
         "service_samples": service_samples,
         "vulnerabilities": vulnerabilities,
         "observations": [
+            "ผลลัพธ์เป็นการสแกน ณ ช่วงเวลาหนึ่ง (point-in-time) ด้วย socket connectivity scan",
  codex-d1sx1u
             "ผลลัพธ์เป็นการสแกน ณ ช่วงเวลาหนึ่ง (point-in-time) ด้วย socket connectivity scan",
 
@@ -494,6 +498,7 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
     y -= 12
     txt(42, y, "1. SCAN INFORMATION", 14, bold=True)
     y -= 22
+    txt(42, y, f"Target: {result['target']}")
  codex-d1sx1u
     txt(42, y, f"Target: {result['target']}")
 
@@ -509,6 +514,8 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
     txt(42, y, "2. HOST DISCOVERY RESULTS", 14, bold=True)
     y -= 22
     state = "ONLINE" if result["summary"]["target_online"] else "OFFLINE"
+    txt(42, y, f"The system identified target host {result['target']} as {state}.")
+
  codex-d1sx1u
     txt(42, y, f"The system identified target host {result['target']} as {state}.")
 
@@ -581,10 +588,16 @@ def generate_pdf_report(scan_id: str, result: dict, started: datetime, completed
 
 
 class Handler(BaseHTTPRequestHandler):
+    def _set_no_cache_headers(self) -> None:
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
+
     def _json(self, payload: dict | list, status: int = 200) -> None:
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self._set_no_cache_headers()
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -596,6 +609,7 @@ class Handler(BaseHTTPRequestHandler):
         data = path.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", content_type)
+        self._set_no_cache_headers()
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -618,10 +632,57 @@ class Handler(BaseHTTPRequestHandler):
         data = report.read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", mime)
+        self._set_no_cache_headers()
         self.send_header("Content-Disposition", f'attachment; filename="scan-{scan_id}.{ext}"')
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
+
+    def do_HEAD(self):  # noqa: N802
+        parsed = urlparse(self.path)
+        path = parsed.path
+
+        if path == "/":
+            target = BASE_DIR / "templates" / "index.html"
+            if not target.exists():
+                return self.send_error(HTTPStatus.NOT_FOUND)
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self._set_no_cache_headers()
+            self.send_header("Content-Length", str(target.stat().st_size))
+            self.end_headers()
+            return
+
+        if path == "/static/style.css":
+            target = BASE_DIR / "static" / "style.css"
+            if not target.exists():
+                return self.send_error(HTTPStatus.NOT_FOUND)
+            self.send_response(200)
+            self.send_header("Content-Type", "text/css; charset=utf-8")
+            self._set_no_cache_headers()
+            self.send_header("Content-Length", str(target.stat().st_size))
+            self.end_headers()
+            return
+
+        if path == "/static/app.js":
+            target = BASE_DIR / "static" / "app.js"
+            if not target.exists():
+                return self.send_error(HTTPStatus.NOT_FOUND)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/javascript; charset=utf-8")
+            self._set_no_cache_headers()
+            self.send_header("Content-Length", str(target.stat().st_size))
+            self.end_headers()
+            return
+
+        if path in {"/api/health", "/api/history"}:
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self._set_no_cache_headers()
+            self.end_headers()
+            return
+
+        self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_GET(self):  # noqa: N802
         parsed = urlparse(self.path)
