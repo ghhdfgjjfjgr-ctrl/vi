@@ -1,0 +1,16 @@
+[Unit]
+Description=Thai Vulnerability Scanner Web App
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/vi-scanner
+EnvironmentFile=/opt/vi-scanner/.env
+ExecStart=/opt/vi-scanner/.venv/bin/python /opt/vi-scanner/app.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
